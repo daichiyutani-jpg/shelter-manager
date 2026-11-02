@@ -1,0 +1,14 @@
+{
+  "name": "shelter-manager",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "避難所開設・運営シミュレーション（開発用仮称：避難所マネージャー）プロトタイプ",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "playthrough": "node tools/playthrough.mjs",
+    "icons": "node tools/make-icons.mjs"
+  }
+}

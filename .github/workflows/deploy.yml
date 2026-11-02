@@ -1,0 +1,47 @@
+# main ブランチに push すると、テスト → 公開ファイルだけを集めて GitHub Pages へ公開まで自動で行う。
+# 依存パッケージは無いので npm install は不要。
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - uses: actions/configure-pages@v5
+      - name: Unit tests
+        run: node --test tests/*.test.mjs
+      - name: Collect site files
+        run: |
+          mkdir site
+          cp -r index.html manifest.webmanifest sw.js icons src site/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
